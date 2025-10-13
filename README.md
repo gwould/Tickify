@@ -1,1 +1,1 @@
-# Tickify
+# Tickify - Event Ticket System
