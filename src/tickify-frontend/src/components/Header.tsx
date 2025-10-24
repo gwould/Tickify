@@ -1,5 +1,7 @@
-import { Ticket, User, Globe, LogIn } from 'lucide-react';
+import { Ticket, User, Plus } from 'lucide-react';
 import { Button } from './ui/button';
+import { InlineSearchBar } from './InlineSearchBar';
+import { Category } from '../types';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,79 +9,117 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { Avatar, AvatarFallback } from './ui/avatar';
 
 interface HeaderProps {
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, eventId?: string) => void;
   currentPage: string;
   isAuthenticated?: boolean;
+  onSearchOpenChange?: (isOpen: boolean) => void;
 }
 
-export function Header({ onNavigate, currentPage, isAuthenticated = false }: HeaderProps) {
+export function Header({ 
+  onNavigate, 
+  currentPage, 
+  isAuthenticated = false,
+  onSearchOpenChange
+}: HeaderProps) {
+  const handleEventClick = (eventId: string) => {
+    onNavigate('event-detail', eventId);
+  };
+
+  const handleCategoryClick = (category: Category) => {
+    onNavigate('listing');
+  };
+
+  const handleCityClick = (city: string) => {
+    onNavigate('listing');
+  };
+
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-neutral-200">
+    <header className="sticky top-0 z-50 bg-teal-500 shadow-md">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between gap-4 h-20">
           {/* Logo */}
           <button 
             onClick={() => onNavigate('home')}
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 hover:opacity-90 transition-opacity flex-shrink-0"
           >
-            <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-              <Ticket className="text-white" size={20} />
+            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+              <Ticket className="text-teal-500" size={24} />
             </div>
-            <span className="text-xl text-neutral-900">Tickify</span>
+            <span className="text-xl text-white hidden sm:inline">Tickify</span>
           </button>
 
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
-            <button
-              onClick={() => onNavigate('home')}
-              className={`text-sm transition-colors ${
-                currentPage === 'home' ? 'text-orange-500' : 'text-neutral-600 hover:text-neutral-900'
-              }`}
-            >
-              Browse Events
-            </button>
-            <button
+          {/* Center: Search Bar */}
+          <div className="flex-1 max-w-2xl hidden md:block">
+            <InlineSearchBar
+              onEventClick={handleEventClick}
+              onCategoryClick={handleCategoryClick}
+              onCityClick={handleCityClick}
+              onOpenChange={onSearchOpenChange}
+            />
+          </div>
+
+          {/* Right: Actions */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Create Event Button */}
+            {isAuthenticated && (
+              <Button
+                onClick={() => onNavigate('organizer-wizard')}
+                variant="secondary"
+                size="sm"
+                className="bg-white text-teal-600 hover:bg-neutral-100 gap-2 hidden lg:flex"
+              >
+                <Plus size={18} />
+                Create Event
+              </Button>
+            )}
+
+            {/* My Tickets */}
+            <Button
               onClick={() => onNavigate('my-tickets')}
-              className={`text-sm transition-colors ${
-                currentPage === 'my-tickets' ? 'text-orange-500' : 'text-neutral-600 hover:text-neutral-900'
+              variant="ghost"
+              size="sm"
+              className={`gap-2 text-white hover:bg-teal-600 ${
+                currentPage === 'my-tickets' ? 'bg-teal-600' : ''
               }`}
             >
-              My Tickets
-            </button>
-          </nav>
+              <Ticket size={18} />
+              <span className="hidden sm:inline">My Tickets</span>
+            </Button>
 
-          {/* Actions */}
-          <div className="flex items-center gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Globe size={20} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>English</DropdownMenuItem>
-                <DropdownMenuItem>Tiếng Việt</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
+            {/* Account Dropdown */}
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <User size={20} />
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="gap-2 text-white hover:bg-teal-600"
+                  >
+                    <Avatar className="w-7 h-7">
+                      <AvatarFallback className="bg-white text-teal-600 text-sm">
+                        U
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="hidden sm:inline">Account</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem onClick={() => onNavigate('my-tickets')}>
+                    <Ticket size={16} className="mr-2" />
                     My Tickets
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onNavigate('organizer-dashboard')}>
+                    <Plus size={16} className="mr-2" />
                     Organizer Dashboard
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <User size={16} className="mr-2" />
+                    Settings
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onNavigate('login')}>
                     Sign Out
                   </DropdownMenuItem>
@@ -88,15 +128,24 @@ export function Header({ onNavigate, currentPage, isAuthenticated = false }: Hea
             ) : (
               <Button
                 onClick={() => onNavigate('login')}
-                variant="ghost"
+                variant="secondary"
                 size="sm"
-                className="gap-2"
+                className="bg-white text-teal-600 hover:bg-neutral-100"
               >
-                <LogIn size={18} />
-                <span className="hidden sm:inline">Sign In</span>
+                Sign In
               </Button>
             )}
           </div>
+        </div>
+
+        {/* Mobile Search Bar */}
+        <div className="pb-4 md:hidden">
+          <InlineSearchBar
+            onEventClick={handleEventClick}
+            onCategoryClick={handleCategoryClick}
+            onCityClick={handleCityClick}
+            onOpenChange={onSearchOpenChange}
+          />
         </div>
       </div>
     </header>

@@ -36,6 +36,7 @@ export default function App() {
   const [completedOrders, setCompletedOrders] = useState<Order[]>([]);
   const [lastOrder, setLastOrder] = useState<Order | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const handleNavigate = (page: string, eventId?: string) => {
     setCurrentPage(page as Page);
@@ -58,7 +59,7 @@ export default function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'home':
-        return <Home onNavigate={handleNavigate} />;
+        return <Home onNavigate={handleNavigate} isSearchOpen={isSearchOpen} />;
       
       case 'listing':
         return <EventListing onNavigate={handleNavigate} />;
@@ -140,6 +141,7 @@ export default function App() {
           onNavigate={handleNavigate} 
           currentPage={currentPage} 
           isAuthenticated={isAuthenticated}
+          onSearchOpenChange={setIsSearchOpen}
         />
       )}
       <main className="flex-1">

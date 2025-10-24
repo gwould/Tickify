@@ -57,7 +57,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
         </div>
         <div className="mt-4 pt-4 border-t border-neutral-100 flex items-center justify-between">
           <span className="text-neutral-500 text-sm">From</span>
-          <span className="text-orange-500">{formatPrice(lowestPrice)}</span>
+          <span className="text-teal-600">{formatPrice(lowestPrice)}</span>
         </div>
       </div>
     </div>

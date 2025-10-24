@@ -4,7 +4,7 @@ import { EventCard } from '../components/EventCard';
 import { FilterSheet } from '../components/FilterSheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { mockEvents } from '../mockData';
-import { Filter, SortOption } from '../types';
+import { Filter, SortOption, Category } from '../types';
 
 interface EventListingProps {
   onNavigate: (page: string, eventId?: string) => void;
@@ -18,6 +18,18 @@ export function EventListing({ onNavigate }: EventListingProps) {
   const handleSearch = () => {
     // In a real app, this would trigger an API call
     console.log('Searching for:', searchQuery);
+  };
+
+  const handleEventClick = (eventId: string) => {
+    onNavigate('event-detail', eventId);
+  };
+
+  const handleCategoryClick = (category: Category) => {
+    setFilters({ ...filters, category });
+  };
+
+  const handleCityClick = (city: string) => {
+    setFilters({ ...filters, city });
   };
 
   const handleApplyFilters = (newFilters: Filter) => {
@@ -68,7 +80,10 @@ export function EventListing({ onNavigate }: EventListingProps) {
             value={searchQuery}
             onChange={setSearchQuery}
             onSearch={handleSearch}
-            placeholder="Search events, cities, venues..."
+            onEventClick={handleEventClick}
+            onCategoryClick={handleCategoryClick}
+            onCityClick={handleCityClick}
+            placeholder="What are you looking for today?"
           />
         </div>
       </section>
