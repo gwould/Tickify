@@ -1,0 +1,126 @@
+import { useState } from 'react';
+import { Header } from './components/Header';
+import { Footer } from './components/Footer';
+import { Home } from './pages/Home';
+import { EventListing } from './pages/EventListing';
+import { EventDetail } from './pages/EventDetail';
+import { Cart } from './pages/Cart';
+import { Checkout } from './pages/Checkout';
+import { Success } from './pages/Success';
+import { MyTickets } from './pages/MyTickets';
+import { OrganizerWizard } from './pages/OrganizerWizard';
+import { OrganizerDashboard } from './pages/OrganizerDashboard';
+import { CartItem, Order } from './types';
+
+type Page = 
+  | 'home' 
+  | 'listing' 
+  | 'event-detail' 
+  | 'cart' 
+  | 'checkout' 
+  | 'success' 
+  | 'my-tickets'
+  | 'organizer-wizard'
+  | 'organizer-dashboard';
+
+export default function App() {
+  const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [completedOrders, setCompletedOrders] = useState<Order[]>([]);
+  const [lastOrder, setLastOrder] = useState<Order | null>(null);
+
+  const handleNavigate = (page: string, eventId?: string) => {
+    setCurrentPage(page as Page);
+    if (eventId) {
+      setSelectedEventId(eventId);
+    }
+    window.scrollTo(0, 0);
+  };
+
+  const handleAddToCart = (items: CartItem[]) => {
+    setCartItems(items);
+  };
+
+  const handleCompleteOrder = (order: Order) => {
+    setCompletedOrders([...completedOrders, order]);
+    setLastOrder(order);
+    setCartItems([]);
+  };
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return <Home onNavigate={handleNavigate} />;
+      
+      case 'listing':
+        return <EventListing onNavigate={handleNavigate} />;
+      
+      case 'event-detail':
+        if (!selectedEventId) {
+          setCurrentPage('home');
+          return null;
+        }
+        return (
+          <EventDetail
+            eventId={selectedEventId}
+            onNavigate={handleNavigate}
+            onAddToCart={handleAddToCart}
+          />
+        );
+      
+      case 'cart':
+        return (
+          <Cart
+            items={cartItems}
+            onNavigate={handleNavigate}
+            onUpdateCart={setCartItems}
+          />
+        );
+      
+      case 'checkout':
+        return (
+          <Checkout
+            items={cartItems}
+            onNavigate={handleNavigate}
+            onCompleteOrder={handleCompleteOrder}
+          />
+        );
+      
+      case 'success':
+        return (
+          <Success
+            order={lastOrder}
+            onNavigate={handleNavigate}
+          />
+        );
+      
+      case 'my-tickets':
+        return (
+          <MyTickets
+            orders={completedOrders}
+            onNavigate={handleNavigate}
+          />
+        );
+      
+      case 'organizer-wizard':
+        return <OrganizerWizard onNavigate={handleNavigate} />;
+      
+      case 'organizer-dashboard':
+        return <OrganizerDashboard onNavigate={handleNavigate} />;
+      
+      default:
+        return <Home onNavigate={handleNavigate} />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header onNavigate={handleNavigate} currentPage={currentPage} />
+      <main className="flex-1">
+        {renderPage()}
+      </main>
+      <Footer />
+    </div>
+  );
+}
