@@ -10,6 +10,9 @@ import { Success } from './pages/Success';
 import { MyTickets } from './pages/MyTickets';
 import { OrganizerWizard } from './pages/OrganizerWizard';
 import { OrganizerDashboard } from './pages/OrganizerDashboard';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
+import { ForgotPassword } from './pages/ForgotPassword';
 import { CartItem, Order } from './types';
 
 type Page = 
@@ -21,7 +24,10 @@ type Page =
   | 'success' 
   | 'my-tickets'
   | 'organizer-wizard'
-  | 'organizer-dashboard';
+  | 'organizer-dashboard'
+  | 'login'
+  | 'register'
+  | 'forgot-password';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -29,6 +35,7 @@ export default function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [completedOrders, setCompletedOrders] = useState<Order[]>([]);
   const [lastOrder, setLastOrder] = useState<Order | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleNavigate = (page: string, eventId?: string) => {
     setCurrentPage(page as Page);
@@ -109,18 +116,36 @@ export default function App() {
       case 'organizer-dashboard':
         return <OrganizerDashboard onNavigate={handleNavigate} />;
       
+      case 'login':
+        return <Login onNavigate={handleNavigate} />;
+      
+      case 'register':
+        return <Register onNavigate={handleNavigate} />;
+      
+      case 'forgot-password':
+        return <ForgotPassword onNavigate={handleNavigate} />;
+      
       default:
         return <Home onNavigate={handleNavigate} />;
     }
   };
 
+  // Pages that don't need header/footer
+  const isStandalonePage = currentPage === 'login' || currentPage === 'register' || currentPage === 'forgot-password';
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Header onNavigate={handleNavigate} currentPage={currentPage} />
+      {!isStandalonePage && (
+        <Header 
+          onNavigate={handleNavigate} 
+          currentPage={currentPage} 
+          isAuthenticated={isAuthenticated}
+        />
+      )}
       <main className="flex-1">
         {renderPage()}
       </main>
-      <Footer />
+      {!isStandalonePage && <Footer />}
     </div>
   );
 }

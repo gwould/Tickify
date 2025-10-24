@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { DollarSign, TrendingUp, Users, Ticket, Calendar, Eye } from 'lucide-react';
+import { DollarSign, TrendingUp, Users, Ticket, Calendar, Eye, Plus } from 'lucide-react';
 import { mockEvents, mockOrders } from '../mockData';
 
 interface OrganizerDashboardProps {
@@ -54,7 +54,7 @@ export function OrganizerDashboard({ onNavigate }: OrganizerDashboardProps) {
   return (
     <div className="min-h-screen bg-neutral-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="mb-2">Organizer Dashboard</h1>
             <p className="text-neutral-600">Manage your events and track performance</p>
@@ -62,7 +62,9 @@ export function OrganizerDashboard({ onNavigate }: OrganizerDashboardProps) {
           <Button
             onClick={() => onNavigate('organizer-wizard')}
             className="bg-orange-500 hover:bg-orange-600"
+            size="lg"
           >
+            <Plus size={20} className="mr-2" />
             Create New Event
           </Button>
         </div>

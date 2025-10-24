@@ -128,24 +128,6 @@ export function Home({ onNavigate }: HomeProps) {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      <section className="bg-gradient-to-br from-orange-500 to-orange-600 text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-white mb-4">Ready to Create Your Event?</h2>
-          <p className="text-xl text-orange-100 mb-8">
-            Join thousands of organizers using Tickify to manage their events
-          </p>
-          <Button 
-            size="lg"
-            onClick={() => onNavigate('organizer-wizard')}
-            className="bg-white text-orange-500 hover:bg-neutral-100"
-          >
-            Start Creating
-            <ArrowRight size={20} className="ml-2" />
-          </Button>
-        </div>
-      </section>
     </div>
   );
 }

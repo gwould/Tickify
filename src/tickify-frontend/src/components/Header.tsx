@@ -1,4 +1,4 @@
-import { Ticket, Plus, User, Globe } from 'lucide-react';
+import { Ticket, User, Globe, LogIn } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -11,9 +11,10 @@ import {
 interface HeaderProps {
   onNavigate: (page: string) => void;
   currentPage: string;
+  isAuthenticated?: boolean;
 }
 
-export function Header({ onNavigate, currentPage }: HeaderProps) {
+export function Header({ onNavigate, currentPage, isAuthenticated = false }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-neutral-200">
       <div className="max-w-7xl mx-auto px-4">
@@ -51,15 +52,6 @@ export function Header({ onNavigate, currentPage }: HeaderProps) {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <Button
-              onClick={() => onNavigate('organizer-wizard')}
-              className="bg-orange-500 hover:bg-orange-600 hidden md:flex"
-              size="sm"
-            >
-              <Plus size={16} className="mr-2" />
-              Create Event
-            </Button>
-
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -72,24 +64,38 @@ export function Header({ onNavigate, currentPage }: HeaderProps) {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <User size={20} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onNavigate('my-tickets')}>
-                  My Tickets
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onNavigate('organizer-dashboard')}>
-                  Organizer Dashboard
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Sign Out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <User size={20} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => onNavigate('my-tickets')}>
+                    My Tickets
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onNavigate('organizer-dashboard')}>
+                    Organizer Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onNavigate('login')}>
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button
+                onClick={() => onNavigate('login')}
+                variant="ghost"
+                size="sm"
+                className="gap-2"
+              >
+                <LogIn size={18} />
+                <span className="hidden sm:inline">Sign In</span>
+              </Button>
+            )}
           </div>
         </div>
       </div>
